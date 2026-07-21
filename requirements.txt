@@ -27,3 +27,7 @@ python-dotenv>=1.0
 fastapi
 
 uvicorn
+
+oci
+
+langchain-community

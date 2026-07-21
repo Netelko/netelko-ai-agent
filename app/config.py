@@ -1,32 +1,31 @@
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from dotenv import load_dotenv
 
-import os
+class Settings(BaseSettings):
 
-load_dotenv()
+    APP_NAME: str = "NETELKO AI Agent"
+    APP_VERSION: str = "1.0.0"
 
-CHROMA_DB = os.getenv(
-    "CHROMA_DB",
-    "./chroma_db"
-)
+    LLM_PROVIDER: str = "ollama"
 
-EMBEDDING_MODEL = os.getenv(
-    "EMBEDDING_MODEL",
-    "BAAI/bge-m3"
-)
+    OLLAMA_URL: str = "http://localhost:11434"
+    OLLAMA_MODEL: str = "qwen2.5:7b"
 
-LLM_PROVIDER = os.getenv(
-    "LLM_PROVIDER",
-    "ollama"
-)
+     # OCI Generative AI
+    OCI_COMPARTMENT_OCID: str = ""
+    OCI_ENDPOINT: str = ""
+    OCI_MODEL_ID: str = ""
 
-OLLAMA_MODEL = os.getenv(
-    "OLLAMA_MODEL",
-    "llama3.1"
-)
 
-LLM_PROVIDER = "ollama"
+    EMBEDDING_MODEL: str = "BAAI/bge-m3"
 
-OLLAMA_MODEL = "qwen2.5:7b"
+    CHROMA_DB: str = "./chroma_db"
 
-OLLAMA_URL = "http://localhost:11434"
+    DATA_PATH: str = "./data/documents"
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        extra="ignore"
+    )
+
+settings = Settings()

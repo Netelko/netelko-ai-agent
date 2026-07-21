@@ -6,7 +6,7 @@ class RAG:
 
     def __init__(self):
 
-        self.retriever = Retriever(k=3)
+        self.retriever = Retriever(k=5)
 
         self.llm = LLM()
 

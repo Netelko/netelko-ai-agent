@@ -6,5 +6,8 @@ class RAGService:
     def __init__(self):
         self.rag = RAGChain()
 
-    def ask(self, question: str) -> str:
+    def ask(self, question: str):
         return self.rag.ask(question)
+    
+   
+   

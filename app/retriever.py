@@ -13,7 +13,7 @@ class Retriever:
         self.retriever = vectordb.as_retriever(
             search_type="similarity",
             search_kwargs={
-                "k": k
+                "k": 5
             }
         )
 

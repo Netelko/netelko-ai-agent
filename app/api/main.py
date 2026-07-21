@@ -2,36 +2,38 @@ from fastapi import FastAPI, HTTPException
 
 from app.models.chat import ChatRequest, ChatResponse
 from app.services.rag_service import RAGService
+from app.services.ingest_service import IngestService
+from app.models.ingest import IngestResponse
 
 app = FastAPI(
     title="NETELKO AI Agent",
     version="1.0.0"
 )
 
-service = RAGService()
+rag_service = RAGService()
 
 
-@app.get("/")
+@app.get("/health")
 def health():
     return {
         "status": "ok"
     }
-
-
 @app.post("/chat", response_model=ChatResponse)
 def chat(request: ChatRequest):
 
-    try:
+    result = rag_service.ask(request.question)
 
-        answer = service.ask(request.question)
+    return ChatResponse(
+        answer=result["answer"],
+        sources=result["sources"]
+    )
 
-        return ChatResponse(
-            answer=answer
-        )
 
-    except Exception as ex:
+@app.post("/ingest", response_model=IngestResponse)
+def ingest():
 
-        raise HTTPException(
-            status_code=500,
-            detail=str(ex)
-        )
+    service = IngestService()
+
+    result = service.ingest()
+
+    return IngestResponse(**result)

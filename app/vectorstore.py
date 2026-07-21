@@ -1,7 +1,7 @@
 from langchain_chroma import Chroma
+from app.config import settings
 
-from app.config import CHROMA_DB
-
+persist_directory=settings.CHROMA_DB
 
 class VectorStore:
 
@@ -14,7 +14,7 @@ class VectorStore:
         vectordb = Chroma.from_documents(
             documents=documents,
             embedding=self.embedding,
-            persist_directory=CHROMA_DB
+            persist_directory=settings.CHROMA_DB,
         )
 
         return vectordb
@@ -22,6 +22,6 @@ class VectorStore:
     def load(self):
 
         return Chroma(
-            persist_directory=CHROMA_DB,
+            persist_directory=settings.CHROMA_DB,
             embedding_function=self.embedding
         )

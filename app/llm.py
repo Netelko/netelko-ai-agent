@@ -1,18 +1,13 @@
 from langchain_ollama import ChatOllama
-
-from app.config import (
-    OLLAMA_MODEL,
-    OLLAMA_URL
-)
-
+from app.config import settings
 
 class LLM:
 
     def __init__(self):
 
         self.model = ChatOllama(
-            model=OLLAMA_MODEL,
-            base_url=OLLAMA_URL,
+            model=settings.OLLAMA_MODEL,
+            base_url=settings.OLLAMA_URL,
             temperature=0
         )
 

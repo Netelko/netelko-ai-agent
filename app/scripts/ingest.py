@@ -5,7 +5,9 @@ from app.vectorstore import VectorStore
 
 print("Cargando documentos...")
 
-loader = DocumentLoader("data/documents")
+from app.config import settings
+
+loader = DocumentLoader(settings.DATA_PATH)
 documents = loader.load()
 
 print(f"Documentos: {len(documents)}")
