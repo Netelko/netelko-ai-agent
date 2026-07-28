@@ -11,7 +11,7 @@ class RAGChain:
 
     def __init__(self):
 
-        self.retriever = Retriever(k=5).retriever
+        self.retriever = Retriever(k=3).retriever
 
         llm = LLM().model
 

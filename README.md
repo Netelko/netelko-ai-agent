@@ -193,7 +193,9 @@ docker ps
 
 Deberán aparecer al menos los siguientes servicios:
 
-* `netelko-ai-agent`
+* `
+
+`
 * `ollama`
 
 ## Descargar el modelo en Ollama
