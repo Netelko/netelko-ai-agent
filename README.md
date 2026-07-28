@@ -2,106 +2,108 @@
 
 ## Descripción general
 
-NETELKO AI Agent es un asistente de inteligencia artificial basado en la arquitectura **Retrieval-Augmented Generation (RAG)**, desarrollado con **Python**, **LangChain** y **FastAPI**.
+# 🤖 NETELKO AI Agent
 
-El agente responde preguntas utilizando exclusivamente la información contenida en documentos proporcionados por el usuario, como archivos **PDF** y **CSV**. Para ello, convierte el contenido de los documentos en representaciones vectoriales (embeddings), almacena dicha información en una base de datos vectorial y recupera los fragmentos más relevantes para generar respuestas precisas mediante un modelo de lenguaje.
+Agente de Inteligencia Artificial desarrollado en Python utilizando **LangChain**, **Ollama**, **ChromaDB** y **FastAPI** para responder preguntas basadas en documentos corporativos mediante la técnica **Retrieval-Augmented Generation (RAG)**.
 
-El proyecto fue diseñado para ejecutarse localmente utilizando **Ollama** y está preparado para su despliegue en **Oracle Cloud Infrastructure (OCI)**.
+El proyecto fue diseñado para ejecutarse localmente y desplegarse en **Oracle Cloud Infrastructure (OCI)** utilizando Docker.
 
 ---
 
-# Arquitectura de la solución
+# Arquitectura
 
-```text
-                           Usuario
-                              │
-                              ▼
-                     FastAPI REST API
-                              │
-                              ▼
-                        RAG Service
-                              │
-                              ▼
-                        LangChain LCEL
-                              │
-            ┌─────────────────┴─────────────────┐
-            ▼                                   ▼
-      Retriever                          Modelo LLM
-            │                              (Ollama)
-            ▼                                   │
-      Chroma Vector DB                          ▼
-            │                          Qwen2.5:7B
-            ▼
-   Embeddings (BAAI/bge-m3)
-            │
-            ▼
-      Documentos PDF / CSV
+```
+                Usuario
+                    │
+                    ▼
+              FastAPI REST API
+                    │
+                    ▼
+          Text Normalizer (Utils)
+                    │
+                    ▼
+             Chroma Retriever
+                    │
+                    ▼
+             LangChain RAG
+                    │
+                    ▼
+           Ollama (Qwen2.5 7B)
+                    │
+                    ▼
+               Respuesta
 ```
 
-### Flujo de procesamiento
+---
 
-1. El usuario carga documentos PDF o CSV.
-2. Los documentos se dividen en fragmentos (chunks).
-3. Se generan embeddings utilizando **BAAI/bge-m3**.
-4. Los embeddings se almacenan en **ChromaDB**.
-5. El usuario realiza una pregunta.
-6. El Retriever recupera los fragmentos más relevantes.
-7. El modelo **Qwen2.5** genera una respuesta basada únicamente en el contexto recuperado.
-8. La API devuelve la respuesta junto con las fuentes utilizadas.
+# Tecnologías
+
+- Python 3.11
+- FastAPI
+- LangChain
+- Ollama
+- ChromaDB
+- HuggingFace Embeddings
+- Docker
+- Oracle Cloud Infrastructure
+- Oracle Container Registry (OCIR)
 
 ---
 
-# Tecnologías y herramientas utilizadas
+# Características
 
-* Python 3.13
-* FastAPI
-* LangChain
-* LangChain LCEL
-* Ollama
-* Qwen2.5:7B
-* HuggingFace Embeddings
-* BAAI/bge-m3
-* ChromaDB
-* Pydantic
-* Docker
-* Git
-* GitHub
+- RAG (Retrieval Augmented Generation)
+- API REST con FastAPI
+- Swagger UI
+- Chroma Vector Database
+- Embeddings con HuggingFace
+- LLM local mediante Ollama
+- Dockerizado
+- Despliegue en Oracle Cloud
+- Respuestas con referencia al documento y página utilizada
 
 ---
 
 # Estructura del proyecto
 
-```text
-netelko-ai-agent/
+```
+app/
 │
-├── app/
-│   ├── api/
-│   ├── models/
-│   ├── services/
-│   ├── loaders.py
-│   ├── splitter.py
-│   ├── embeddings.py
-│   ├── vectorstore.py
-│   ├── retriever.py
-│   ├── rag_chain.py
-│   ├── llm.py
-│   └── config.py
+├── api/
+│     └── main.py
 │
-├── chroma_db/
-├── data/
-│   └── documents/
+├── models/
 │
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-└── README.md
+├── services/
+│
+├── utils/
+│     └── text.py
+│
+├── embeddings.py
+├── llm.py
+├── rag_chain.py
+├── retriever.py
+├── splitter.py
+├── vectorstore.py
+│
+└── scripts/
+      └── ingest.py
+
+data/
+    └── documents/
+
+chroma_db/
+
+Dockerfile
+
+requirements.txt
 ```
 
 ---
 
-# Instrucciones para ejecutar el proyecto
+# Instalación
 
-## 1. Clonar el repositorio
+## Clonar repositorio
 
 ```bash
 git clone https://github.com/Netelko/netelko-ai-agent.git
@@ -111,29 +113,27 @@ cd netelko-ai-agent
 
 ---
 
-## 2. Crear el entorno virtual
+## Crear entorno virtual
 
 ```bash
 python -m venv .venv
 ```
 
-Activar el entorno:
-
-**Windows**
-
-```bash
-.venv\Scripts\activate
-```
-
-**macOS / Linux**
+Linux / Mac
 
 ```bash
 source .venv/bin/activate
 ```
 
+Windows
+
+```powershell
+.venv\Scripts\activate
+```
+
 ---
 
-## 3. Instalar dependencias
+## Instalar dependencias
 
 ```bash
 pip install -r requirements.txt
@@ -141,9 +141,7 @@ pip install -r requirements.txt
 
 ---
 
-## 4. Instalar Ollama
-
-Descargar Ollama desde:
+# Instalar Ollama
 
 https://ollama.com
 
@@ -155,156 +153,253 @@ ollama pull qwen2.5:7b
 
 ---
 
-## 5. Agregar documentos
+# Variables de entorno
 
-# Ejecución con Docker
+Crear archivo
 
-## Requisitos
-
-* Docker Desktop
-* Docker Compose
-
-Verificar la instalación:
-
-```bash
-docker --version
-docker compose version
+```
+.env
 ```
 
-## Construir la imagen
+Ejemplo
 
-Desde la raíz del proyecto ejecutar:
+```env
+OLLAMA_URL=http://localhost:11434
 
-```bash
-docker compose build
+LLM_PROVIDER=ollama
+
+LLM_MODEL=qwen2.5:7b
+
+EMBEDDING_MODEL=BAAI/bge-m3
+
+CHROMA_DB=chroma_db
+
+DOCUMENTS_PATH=data/documents
 ```
 
-## Levantar los contenedores
+---
 
-```bash
-docker compose up -d
+# Ingestar documentos
+
+Colocar los documentos PDF dentro de:
+
+```
+data/documents
 ```
 
-## Verificar los contenedores
+Ejecutar
 
 ```bash
-docker ps
+python app/scripts/ingest.py
 ```
 
-Deberán aparecer al menos los siguientes servicios:
+Esto genera la base vectorial:
 
-* `
+```
+chroma_db/
+```
 
-`
-* `ollama`
+---
 
-## Descargar el modelo en Ollama
-
-La primera vez es necesario descargar el modelo dentro del contenedor:
+# Ejecutar la API
 
 ```bash
-docker exec -it ollama ollama pull qwen2.5:7b
+uvicorn app.api.main:app --reload
 ```
 
-## Acceder a la API
+Abrir
 
-Swagger:
-
-```text
+```
 http://localhost:8000/docs
 ```
 
-Health Check:
+---
 
-```text
-http://localhost:8000/health
+# Endpoints
+
+## Health
+
+GET
+
+```
+/health
+```
+
+Respuesta
+
+```json
+{
+    "status":"ok"
+}
 ```
 
 ---
 
-# Ejemplos de preguntas
+## Chat
 
-El agente puede responder preguntas como:
+POST
 
-* ¿Qué servicios ofrece NETELKO?
-* ¿Dónde se encuentra ubicada la empresa?
-* ¿Cuál es la cobertura de los servicios?
-* ¿Qué tecnologías utiliza NETELKO?
-* ¿Qué ventajas competitivas ofrece la empresa?
-* ¿Cómo puedo contactar al área comercial?
-* Resume el portafolio de servicios.
-* ¿Qué soluciones de telecomunicaciones ofrece la compañía?
-
----
-
-# Ejemplos de respuestas
-
-### Pregunta
-
-> ¿Qué servicios ofrece NETELKO?
-
-### Respuesta
-
-> NETELKO ofrece soluciones integrales en tecnologías de la información y telecomunicaciones, incluyendo servicios de diseño, implementación, soporte y acompañamiento tecnológico para empresas. Además, cuenta con cobertura regional, alianzas con fabricantes líderes y un enfoque consultivo orientado a las necesidades del cliente.
-
-Fuentes:
-
-* Portafolio de Servicios.pdf (Página 2)
-* Portafolio de Servicios.pdf (Página 3)
-
----
-
-### Pregunta
-
-> ¿Dónde está ubicada NETELKO?
-
-### Respuesta
-
-> NETELKO tiene su sede principal en Bogotá, Colombia, desde donde presta servicios a clientes en toda la región.
-
-Fuente:
-
-* Portafolio de Servicios.pdf (Página 2)
-
----
-
-# Despliegue en Oracle Cloud Infrastructure (OCI)
-
-> **Estado:** En implementación.
-
-El proyecto está diseñado para ejecutarse en Oracle Cloud Infrastructure (OCI) utilizando servicios administrados.
-
-La arquitectura objetivo es:
-
-```text
-Internet
-    │
-    ▼
-Load Balancer
-    │
-    ▼
-Container Instance
-    │
-    ▼
-NETELKO AI Agent
-    │
-    ├── OCI Generative AI
-    └── ChromaDB
+```
+/chat
 ```
 
-## Pasos previstos para el despliegue
+Body
 
-1. Crear un Compartimento (Compartment).
-2. Configurar usuarios y políticas de IAM.
-3. Crear un repositorio en Oracle Container Registry (OCIR).
-4. Construir la imagen Docker.
-5. Etiquetar la imagen para OCIR.
-6. Publicar la imagen en OCIR.
-7. Crear un Container Instance.
-8. Configurar las variables de entorno.
-9. Conectar el agente con OCI Generative AI.
-10. Validar la API mediante los endpoints `/health` y `/chat`.
+```json
+{
+    "question":"¿Qué servicios ofrece NETELKO?"
+}
+```
+
+Respuesta
+
+```json
+{
+  "answer":"NETELKO ofrece...",
+  "sources":[
+    {
+      "document":"Portafolio de Servicios.pdf",
+      "page":2
+    }
+  ]
+}
+```
 
 ---
 
+## Ingest
+
+POST
+
+```
+/ingest
+```
+
+Reconstruye la base vectorial utilizando los documentos del directorio.
+
+---
+
+# Docker
+
+Construir imagen
+
+```bash
+docker build --platform linux/amd64 -t agenteainetelko-api .
+```
+
+Ejecutar
+
+```bash
+docker run -d \
+    --name netelko-ai-agent \
+    --network host \
+    agenteainetelko-api
+```
+
+---
+
+# Despliegue en Oracle Cloud
+
+## Publicar imagen en OCIR
+
+```bash
+docker tag agenteainetelko-api \
+ocir.sa-bogota-1.oci.oraclecloud.com/<namespace>/netelko-ia-agente:latest
+```
+
+```bash
+docker push \
+ocir.sa-bogota-1.oci.oraclecloud.com/<namespace>/netelko-ia-agente:latest
+```
+
+---
+
+## Descargar imagen en la VM
+
+```bash
+docker pull \
+ocir.sa-bogota-1.oci.oraclecloud.com/<namespace>/netelko-ia-agente:latest
+```
+
+---
+
+## Ejecutar
+
+```bash
+docker run -d \
+    --restart unless-stopped \
+    --network host \
+    --name netelko-ai-agent \
+    -e OLLAMA_URL=http://127.0.0.1:11434 \
+    ocir.sa-bogota-1.oci.oraclecloud.com/<namespace>/netelko-ia-agente:latest
+```
+
+---
+
+# Flujo del sistema
+
+```
+Usuario
+    │
+    ▼
+Pregunta
+    │
+    ▼
+Normalización
+    │
+    ▼
+Retriever
+    │
+    ▼
+ChromaDB
+    │
+    ▼
+Contexto
+    │
+    ▼
+Prompt
+    │
+    ▼
+Ollama
+    │
+    ▼
+Respuesta
+```
+
+---
+
+# Próximas mejoras
+
+- Streaming de respuestas
+- Historial de conversación
+- Re-ranking de documentos
+- Soporte para DOCX y CSV
+- Memoria conversacional
+- Caché de respuestas frecuentes
+- Panel web tipo ChatGPT
+- Autenticación mediante JWT
+- Despliegue automatizado con GitHub Actions
+- Monitoreo y métricas
+
+---
+
+# Autor
+
+**Netelko**
+
+Proyecto desarrollado como una implementación de un agente de IA basado en RAG utilizando tecnologías open source y desplegado sobre Oracle Cloud Infrastructure.
+
+---
+
+# Licencia
+
+MIT License
+
+
+![alt text](image.png)
+
+---
+Repositorio con el deploy en OCI
+
+http://149.130.170.33:8000/docs#/default/chat_chat_post
 
